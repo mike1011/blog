@@ -23,7 +23,10 @@ var email =  req.body.email;
 
 console.log(email);
 
-  res.render('user_created', { title: 'Express' });
+  //res.render('user_created', { title: 'Express' });
+    res.render('user_created', {
+        userName: req.body.email
+    });
 
 
 });
