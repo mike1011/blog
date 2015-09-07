@@ -21,4 +21,39 @@ router.get('/', function(req, res, next) {
    //res.sendfile('views/index.html');
 });
 
+
+//for login
+// router.post('/login', function (req, res) {
+
+//     var person = {
+//         name: req.params.username,
+//         email: req.params.email
+//     };
+
+//     var data = new dataSchema(person);
+
+//     data.save(function (error, data){
+//         if(error) {
+//             console.log(error);
+//             res.json(data);
+//         }
+//         else {
+//             res.json(data);
+//         }
+//     });
+// });
+
+
+
+
+
+
+/* GET about page. */
+router.get('/about', function(req, res, next) {
+
+ //using ejs instead of jade for html
+   res.render('about');
+});
+
+
 module.exports = router;

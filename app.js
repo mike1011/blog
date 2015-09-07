@@ -1,5 +1,14 @@
+
+// =======================
+// get the packages we need ============
+// =======================
+
+var socketioJwt   = require("socketio-jwt");
 var express = require('express');
 var orm = require("orm");
+var fs = require('fs');
+
+
 //db connections
 var mysql = require('mysql');
 
@@ -26,6 +35,18 @@ var Bookshelf = require('bookshelf')(knex);
 var Schema = require('./schema');
 
 var app = express();
+
+
+// // dynamically include routes (Controller)
+// fs.readdirSync('./controllers').forEach(function (file) {
+//   if(file.substr(-3) == '.js') {
+//       route = require('./controllers/' + file);
+//       route.controller(app);
+//   }
+// });
+
+
+
 
 // var connection = mysql.createConnection({
 //     host     : HOST,
@@ -82,45 +103,23 @@ var Tag = Bookshelf.Model.extend({
 
 
 //test db records
-User.where('id', 1).fetch({withRelated: ['posts.tags']}).then(function(user) {
+// User.where('id', 1).fetch({withRelated: ['posts.tags']}).then(function(user) {
 
-  console.log(user);
+//   console.log(user);
 
-}).catch(function(err) {
+// }).catch(function(err) {
 
-  console.error(err);
+//   console.error(err);
 
-});
+// });
 
-
-//for orm
-// orm.connect("mysql://username:password@host/database", function (err, db) {
-//   if (err) throw err;
-
-//     var Person = db.define("person", {
-//         name      : String,
-//         surname   : String,
-//         age       : Number, // FLOAT
-//         male      : Boolean,
-//         continent : [ "Europe", "America", "Asia", "Africa", "Australia", "Antartica" ], // ENUM type
-//         photo     : Buffer, // BLOB/BINARY
-//         data      : Object // JSON encoded
-//     }, {
-//         methods: {
-//             fullName: function () {
-//                 return this.name + ' ' + this.surname;
-//             }
-//         },
-//         validations: {
-//             age: orm.enforce.ranges.number(18, undefined, "under-age")
-//         }
-//     });
 
 
 //added for layouts
 var engine = require('ejs-locals');
 var path = require('path');
 var favicon = require('serve-favicon');
+
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -134,7 +133,6 @@ var users = require('./routes/users');
 //added ejs-locals 
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
-
 app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
 

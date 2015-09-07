@@ -1,0 +1,54 @@
+=====download and install=======
+https://nodejs.org/en/download/
+======untar it ,move and set the path=========
+tar xvfz node-v0.12.7-linux-x64.tar.gz
+mkdir -p /usr/local/nodejs
+mv node-v0.12.7-linux-x64/*  /usr/local/nodejs
+export PATH=$PATH:/usr/local/nodejs/bin/
+=========check version=================
+node --version
+===============install express===========
+npm install express
+===========generator================
+http://expressjs.com/starter/generator.html
+http://expressjs.com/2x/guide.html#view-rendering
+npm install express-generator -g
+==============to set up layout================
+npm install ejs-locals --save
+=========start the app===================
+DEBUG=blog npm start
+OR
+node bin/www
+OR
+npm start
+=============install POSTGRES============
+ npm install pg --save
+ ============install and setup MYSQL====================
+ https://www.digitalocean.com/community/tutorials/a-basic-mysql-tutorial
+===========first install mysql and then module
+
+sudo apt-get install mysql-server
+ mysql -u root -p
+ =====password is root
+ SHOW DATABASES;
+ CREATE DATABASE node_demo;
+ npm install mysql
+ ==================for ORM==============================
+ USE BOOKSHELF=================
+ http://blog.ragingflame.co.za/2014/7/21/using-nodejs-with-mysql
+ ============layouts in node.js=================
+ https://truongtx.me/2014/03/19/nodejs-with-express-more-advanced-stuff/
+ ============install nvm================================
+------https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
+ curl https://raw.githubusercontent.com/creationix/nvm/v0.11.1/install.sh | bash
+ /bin/bash --login
+ nvm install v0.12.7
+ which node
+ npm init
+ ===================create and update db=========
+ mysql -u root -p
+ root
+ show databases;
+ use node_demo;
+ drop database node_demo;
+ create database node_demo;

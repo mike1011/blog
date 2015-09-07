@@ -20,5 +20,18 @@
     "pg": "^4.4.1",
     "serve-favicon": "~2.3.0",
     "when": "^3.7.3"
-  }
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mike1011/blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mike1011/blog/issues"
+  },
+  "homepage": "https://github.com/mike1011/blog#readme",
+  "description": ""
 }

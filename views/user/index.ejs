@@ -1,0 +1,104 @@
+    
+<% layout('../layout') -%>
+
+  <h2>Existing Users</h2>
+    <ul class="list-group">
+         <% for(var key in users) { %> 
+              <li class="list-group-item">
+                <p><strong>Email:</strong><%= users[key].email %></p>
+                <p><strong>User Name:</strong><%= users[key].name %>
+                  <span class="pull-right">
+                  <%= users[key].created_at%>
+                  </span>
+                </p> 
+               <p><strong>Location:</strong><%= users[key].formatted_address %></p> 
+               <p>
+              <!-- <a href="/users/new" class="btn btn-primary">Create New</a> -->
+              <a href="/users/add_location/<%= users[key].id %>" class="btn btn-default">Create Path</a>
+              </p>
+
+               <div id="map_<%= users[key].id %>" style="height:300px"></div>
+              </li>
+        <% }; %>
+    </ul> 
+
+
+
+
+<script type="text/javascript">
+
+  
+          function init_map(position,title,map_id,contentString) {
+            var mapOptions = {
+                center: position,
+                zoom: 16
+            };
+            var marker = new google.maps.Marker({
+                position: position,
+                title: title
+            });
+              var infowindow = new google.maps.InfoWindow({
+                content: contentString
+              });
+
+                 google.maps.event.addListener(
+                    marker,
+                    function() {
+                        //document.getElementById('lat').value = marker.position.lat();
+                        //document.getElementById('lng').value = marker.position.lng();
+                    }
+                );
+                  
+
+            var map = new google.maps.Map(document.getElementById("map_"+map_id),
+                mapOptions);
+            marker.setMap(map);
+        }//method ends
+
+
+ function initialize(){
+    var markers=[];
+    console.log( <%- JSON.stringify(users) %>);
+    //ref-http://stackoverflow.com/questions/13788314/express-and-ejs-to-render-a-json
+    var users = <%- JSON.stringify(users) %>;
+    $.each( users, function(index) {
+                        
+    //first all details in array-markers
+    markers.push([users[index]['formatted_address'], users[index]['lat'],users[index]['lng'],users[index]['id'],users[index]['name']]);
+     });
+        // Loop through our array of markers & place each one on the map  
+        for( i = 0; i < markers.length; i++ ) {
+          var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+          var title=markers[i][0];
+          var map_id=markers[i][3];
+          var user_name=markers[i][4];
+          var contentString = '<div id="content">'+
+          '<div id="siteNotice">'+
+          '</div>'+
+          '<h1 id="firstHeading" class="firstHeading">'+title+'</h1>'+
+          '<div id="bodyContent">'+
+          '<p>'+user_name+'</p>'+
+          '</div>'+
+          '</div>';
+          //pass all the above in the init_map method
+          init_map(position,title,map_id,contentString);
+          
+
+            
+        }//loop ends
+}//initialize ends
+
+
+
+
+
+$(document).ready(function(){
+  
+  setTimeout('initialize()', 1000);
+
+
+})//document ends
+
+
+</script>
+

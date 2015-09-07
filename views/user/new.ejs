@@ -1,0 +1,106 @@
+<% layout('../layout') -%>
+
+<div class="row">
+
+<form class="form-horizontal" method="post" action="/users">
+  <div class="col-md-12 form-group">
+        <label class="control-label">Email</label>
+            <input type="email" class="form-control" name="email" placeholder="Email" required>
+        <label class="control-label">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Any username of your choice" required>
+        <label class="control-label">About Yourself</label>
+             <textarea class="form-control" rows="3" name="about_yourself" placeholder="About yourself" required></textarea>
+
+    <div class="form-group">
+        <label for="location" class="control-label col-xs-2">Location on map</label>
+        <div class="col-xs-10">
+            <input id="geocomplete" type="text" class="form-control" placeholder="Type in an address" value="Mumbai India" />
+           <input id="find" type="button" class="btn btn-primary" value="find" />
+             <a id="reset" href="#" class="btn btn-danger" style="display:none;">Reset Marker</a>
+        </div>
+    </div>   
+
+
+      <fieldset>
+        <label>Latitude</label>
+        <input name="lat" class="form-control" type="text" class="form-control" value="">
+      
+        <label>Longitude</label>
+        <input name="lng"  class="form-control" type="text" class="form-control" value="">
+      
+        <label>Formatted Address</label>
+        <input name="formatted_address" class="form-control" type="text" value="">
+      </fieldset>
+
+
+
+
+<div class="map_canvas" style="width:100%;height:400px;"></div>
+
+    <div class="form-group">
+        <div class="col-xs-offset-2 col-xs-10">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+
+</form>
+
+</div><!-- col-md-12 ends -->
+
+</div><!--  row ends -->
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+        $("#geocomplete").geocomplete({
+          map: ".map_canvas",
+          details: "form",
+          markerOptions: {
+            draggable: true
+          }
+        });
+
+        
+$("#geocomplete").bind("geocode:dragged", function(event, latLng){
+  console.log('Dragged Lat: '+latLng.lat());
+  console.log('Dragged Lng: '+latLng.lng());
+   $("input[name=lat]").val(latLng.lat());
+   $("input[name=lng]").val(latLng.lng());
+   $("#reset").show();
+  var map = $("#geocomplete").geocomplete("map");
+    map.panTo(latLng);
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({'latLng': latLng }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      if (results[0]) {
+        var road = results[0].address_components[1].long_name;
+        var town = results[0].address_components[2].long_name;
+        var county = results[0].address_components[3].long_name;
+        var country = results[0].address_components[4].long_name;
+        $("input[name=formatted_address]").val(road+' '+town+' '+county+' '+country);
+        
+         // $('#logs').html('<b>'+road+' '+town+' '+county+' '+country+'</b>');
+
+
+        
+      }
+    }
+  });
+});
+
+
+        
+        $("#reset").click(function(){
+          $("#geocomplete").geocomplete("resetMarker");
+          $("#reset").hide();
+          return false;
+        });
+
+        $("#find").click(function(){
+          $("#geocomplete").trigger("geocode");
+        }).click();
+
+
+      });//document ends
+    </script>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
