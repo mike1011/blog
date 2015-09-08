@@ -1,26 +1,34 @@
 <% layout('../layout') -%>
 
+<h2>
+Hi <%= user.name %>,add current location if you are in traffic/congestion,to help others.
+</h2>
 <div class="row">
 
-<form class="form-horizontal" method="post" action="/users">
-  <div class="col-md-12 form-group">
-        <label class="control-label">Email</label>
-            <input type="email" class="form-control" name="email" placeholder="Email" required>
-        <label class="control-label">Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Any username of your choice" required>
-        <label class="control-label">About Yourself</label>
-             <textarea class="form-control" rows="3" name="about_yourself" placeholder="About yourself" required></textarea>
+<form class="form-horizontal" method="post" action="/users/add_location">
+
+<div class="col-md-12">
+  <!-- section starts -->
+    <p>ADD LOCATION</p>
+
+        <label class="control-label">Title</label>
+            <input type="text" class="form-control" name="title" placeholder="Add a simple title" required>
+        <label class="control-label">Comment</label>
+             <textarea class="form-control" rows="3" name="comment" placeholder="Some details if possible" required></textarea>
 
     <div class="form-group">
-        <label for="location" class="control-label col-xs-2">Location on map</label>
         <div class="col-xs-10">
-            <input id="geocomplete" type="text" class="form-control" placeholder="Type in an address" value="Mumbai India" />
+        <label class="control-label">Add Location</label>
+            <input id="geocomplete" type="text" class="form-control" placeholder="Type in address" name="geocomplete" value="<%= user.formatted_address %>"  />
            <input id="find" type="button" class="btn btn-primary" value="find" />
         </div>
     </div>   
 
 
       <fieldset>
+
+        <input type="hidden" name="user_id" value="<%= user.id%>" >
+
         <input name="lat" class="form-control" type="hidden" class="form-control" value="">
       
         <input name="lng"  class="form-control" type="hidden" class="form-control" value="">
@@ -28,30 +36,28 @@
         <input name="formatted_address" class="form-control" type="hidden" value="">
       </fieldset>
 
-
-
-
 <div class="map_canvas" style="width:100%;height:400px;"></div>
+<!-- section ends -->
 
-    <div class="form-group">
-        <div class="col-xs-offset-2 col-xs-10">
-            <button type="submit" class="btn btn-primary">Create</button>
+</div><!-- col-md-12 ends -->
+    <div class="col-md-12 well">
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Save</button>
         </div>
     </div>
 
 </form>
-
-</div><!-- col-md-12 ends -->
-
 </div><!--  row ends -->
 
 
 <script type="text/javascript">
 $(document).ready(function(){
 
+
+var myLatlng = new google.maps.LatLng(<%- JSON.stringify(user.lat) %>,<%- JSON.stringify(user.lng) %>);
 var options = {
   map: ".map_canvas",
-  location: "Mumbai",
+  location: myLatlng,
   mapOptions: {
     streetViewControl: false,
     mapTypeId : google.maps.MapTypeId.ROADMAP
@@ -90,7 +96,6 @@ $("#geocomplete").geocomplete(options).bind("geocode:result", function(event, re
  
 })//method ends
 
-
 function GetLatLong(latLng,map){
       var geocoder = new google.maps.Geocoder();
      geocoder.geocode({'latLng': latLng }, function(results, status) {
@@ -101,8 +106,11 @@ function GetLatLong(latLng,map){
         var county = results[0].address_components[3].long_name;
         var country = results[0].address_components[4].long_name;
         $("#geocomplete").val(road+' '+town+' '+county+' '+country);
+
         
-        console.log('<b>'+road+' '+town+' '+county+' '+country+'</b>');
+          console.log('<b>'+road+' '+town+' '+county+' '+country+'</b>');
+
+
 
       var map = $("#geocomplete").geocomplete("map"),
 ///////////////////////This code should work now as expected-STARTS 
@@ -128,25 +136,27 @@ function GetLatLong(latLng,map){
       }
     }
   }); 
-}//method ends
 
+}//method ends
         
 $("#geocomplete").bind("geocode:dragged", function(event, latLng){
-  console.log('Dragged Lat: '+latLng.lat());
-  console.log('Dragged Lng: '+latLng.lng());
+  console.log('Dragged Lat : '+latLng.lat());
+  console.log('Dragged Lng : '+latLng.lng());
    $("input[name=lat]").val(latLng.lat());
    $("input[name=lng]").val(latLng.lng());
-   $("#reset").show();
   var map = $("#geocomplete").geocomplete("map");
     map.panTo(latLng);
     GetLatLong(latLng,map);
+
 });
 
-
-
+       
         $("#find").click(function(){
           $("#geocomplete").trigger("geocode");
         }).click();
+
+        
+
 
 
       });//document ends

@@ -2,99 +2,94 @@
 <% layout('../layout') -%>
 
   <h2>Existing Users</h2>
-    <ul class="list-group">
-         <% for(var key in users) { %> 
-              <li class="list-group-item">
-                <p><strong>Email:</strong><%= users[key].email %></p>
-                <p><strong>User Name:</strong><%= users[key].name %>
-                  <span class="pull-right">
-                  <%= users[key].created_at%>
-                  </span>
-                </p> 
-               <p><strong>Location:</strong><%= users[key].formatted_address %></p> 
-               <p>
-              <!-- <a href="/users/new" class="btn btn-primary">Create New</a> -->
-              <a href="/users/add_location/<%= users[key].id %>" class="btn btn-default">Create Path</a>
-              </p>
 
-               <div id="map_<%= users[key].id %>" style="height:300px"></div>
-              </li>
-        <% }; %>
-    </ul> 
-
-
+   <div id="map" class="map" style="height:400px;width:inherit">
 
 
 <script type="text/javascript">
 
-  
-          function init_map(position,title,map_id,contentString) {
-            var mapOptions = {
-                center: position,
-                zoom: 16
-            };
-            var marker = new google.maps.Marker({
-                position: position,
-                title: title
-            });
-              var infowindow = new google.maps.InfoWindow({
-                content: contentString
-              });
-
-                 google.maps.event.addListener(
-                    marker,
-                    function() {
-                        //document.getElementById('lat').value = marker.position.lat();
-                        //document.getElementById('lng').value = marker.position.lng();
-                    }
-                );
-                  
-
-            var map = new google.maps.Map(document.getElementById("map_"+map_id),
-                mapOptions);
-            marker.setMap(map);
-        }//method ends
 
 
- function initialize(){
-    var markers=[];
-    console.log( <%- JSON.stringify(users) %>);
+  var pinColor = "000000";
+    var map;
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+        mapTypeId: 'roadmap'
+    };
+    
+
+
+function initialize() {
+
+var gmarkers = [];
+var markers=[];
+var infoWindowContent=[];
+  console.log( <%- JSON.stringify(locations) %>);
     //ref-http://stackoverflow.com/questions/13788314/express-and-ejs-to-render-a-json
-    var users = <%- JSON.stringify(users) %>;
-    $.each( users, function(index) {
-                        
-    //first all details in array-markers
-    markers.push([users[index]['formatted_address'], users[index]['lat'],users[index]['lng'],users[index]['id'],users[index]['name']]);
-     });
-        // Loop through our array of markers & place each one on the map  
-        for( i = 0; i < markers.length; i++ ) {
-          var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
-          var title=markers[i][0];
-          var map_id=markers[i][3];
-          var user_name=markers[i][4];
-          var contentString = '<div id="content">'+
-          '<div id="siteNotice">'+
-          '</div>'+
-          '<h1 id="firstHeading" class="firstHeading">'+title+'</h1>'+
-          '<div id="bodyContent">'+
-          '<p>'+user_name+'</p>'+
-          '</div>'+
-          '</div>';
-          //pass all the above in the init_map method
-          init_map(position,title,map_id,contentString);
-          
+    var nearbys = <%- JSON.stringify(locations) %>;
 
-            
-        }//loop ends
+ $.each(nearbys, function(index) {
+                    
+markers.push([nearbys[index]['title'], nearbys[index]['lat'],nearbys[index]['lng'],nearbys[index]['id']]);
+infoWindowContent.push(['<div class="content" style="height:200px;width:300px;" >' +
+        '<div id="bodyContent" class="text-danger word-wrap"><i>'+nearbys[index]['comment'].substring(0,150)+"..."+'</i></div>' + 
+        '<div><h3 \>'+nearbys[index]['title']+'</h3>' +
+        '<p class="pull-right"><a class="text-info" href="/places/show/'+nearbys[index]['id']+'" data-remote="true" title="view more">view more</a></p></div>' + 
+        '</div>']);
+ });
+                    
+    // Display a map on the page
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    map.setTilt(45);
+    
+        
+ 
+    // Display multiple markers on a map
+    var infoWindow = new google.maps.InfoWindow({ maxWidth: 350 }), marker, i;
+    
+    // Loop through our array of markers & place each one on the map  
+    for( i = 0; i < markers.length; i++ ) {
+        var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+        bounds.extend(position);
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="+markers[i][0].charAt(0).toUpperCase()+"|FE7569|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+        marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: markers[i][0],
+            icon: pinImage
+        });
+ 
+ //array to open infowindow on click of external link    
+ //elements will be pushed in order and can be shown using index in each_with_index   
+ gmarkers.push(marker);
+        // Allow each marker to have an info window    
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+                infoWindow.setContent(infoWindowContent[i][0]);
+                infoWindow.open(map, marker);
+            }
+        })(marker, i));
+        // Automatically center the map fitting all markers on the screen
+        map.fitBounds(bounds);
+        
+    }
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+    //     this.setZoom(14);
+    //     google.maps.event.removeListener(boundsListener);
+    // });
+    
+
 }//initialize ends
 
-
-
-
-
 $(document).ready(function(){
-  
-  setTimeout('initialize()', 1000);
+
+
+initialize();
+//setTimeout('initialize()', 2000);
 
 
 })//document ends

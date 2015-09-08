@@ -10,16 +10,17 @@ var Schema = {
     created_at: {type: 'dateTime', nullable: false},
     updated_at: {type: 'dateTime', nullable: true}
   },
-    user_locations: {
+    added_locations: {
     id: {type: 'increments', nullable: false, primary: true},
-    user_id: {type: 'integer', nullable: false, unique: true},
+    user_id: {type: 'integer', nullable: false, unique: false},
+    title: {type: 'string', maxlength: 500, nullable: true},
     comment: {type: 'text', maxlength: 500, nullable: true},
-    lat_start: {type: 'float', nullable: false},
-    lng_start: {type: 'float', nullable: false},
-    formatted_address_start: {type: 'text', nullable: false},
-    lat_end: {type: 'float', nullable: false},
-    lng_end: {type: 'float', nullable: false},
-    formatted_address_end: {type: 'text', nullable: false},    
+    lat: {type: 'float', nullable: false},
+    lng: {type: 'float', nullable: false},
+    formatted_address: {type: 'text', nullable: false},
+    agree_count: {type: 'decimal', nullable: false},
+    disagree_count: {type: 'decimal', nullable: false},
+    remove_after: {type: 'dateTime', nullable: false},
     created_at: {type: 'dateTime', nullable: false},
     updated_at: {type: 'dateTime', nullable: true}
   },

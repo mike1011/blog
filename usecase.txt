@@ -1,0 +1,5 @@
+i am in colaba
+i see the traffic/congestin
+i open this app and pin the location,add title,comment,time after which it shud unpin.
+when other user type in similar location,if its within 50km,will show pinned markers with each showing username,address of current user as where is he from,created_at time,agree/disagree count
+others can agree/disagree or directly remove it.
