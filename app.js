@@ -36,6 +36,11 @@ var Schema = require('./schema');
 
 var app = express();
 
+//==============adding logging using winston==========
+var logger = require("./logger");
+logger.debug("Overriding 'Express' logger");
+app.use(require('morgan')({ "stream": logger.stream }));
+
 
 // // dynamically include routes (Controller)
 // fs.readdirSync('./controllers').forEach(function (file) {
@@ -126,6 +131,7 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var angular = require('./routes/angular');
 
 
 
@@ -142,10 +148,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/angular', angular);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

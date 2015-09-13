@@ -1,0 +1,110 @@
+    
+<% layout('../layout') -%>
+
+  <h2>Existing Users</h2>
+
+   <div id="map" class="map" style="height:400px;width:inherit">
+
+
+<script type="text/javascript">
+
+
+
+  var pinColor = "000000";
+    var map;
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+        mapTypeId: 'roadmap'
+    };
+    
+
+
+function initialize() {
+map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var circle = new google.maps.Circle({
+                
+                map:map,
+                radius:160930,
+                strokeColor: "red",
+                strokeOpacity:0.8,
+                strokeWeight: 2,
+                fillColor: "red"
+            });
+
+var gmarkers = [];
+var markers=[];
+var infoWindowContent=[];
+  console.log( <%- JSON.stringify(locations) %>);
+    //ref-http://stackoverflow.com/questions/13788314/express-and-ejs-to-render-a-json
+    var nearbys = <%- JSON.stringify(locations) %>;
+
+ $.each(nearbys, function(index) {
+                    
+markers.push([nearbys[index]['title'], nearbys[index]['lat'],nearbys[index]['lng'],nearbys[index]['id']]);
+infoWindowContent.push(['<div class="content" style="height:200px;width:300px;" >' +
+        '<div id="bodyContent" class="text-danger word-wrap"><i>'+nearbys[index]['comment'].substring(0,150)+"..."+'</i></div>' + 
+        '<div><h3 \>'+nearbys[index]['title']+'</h3>' +
+        '<p class="pull-right"><a class="text-info" href="/places/show/'+nearbys[index]['id']+'" data-remote="true" title="view more">view more</a></p></div>' + 
+        '</div>']);
+ });
+                    
+    // Display a map on the page
+    
+    map.setTilt(45);
+    
+        
+ 
+    // Display multiple markers on a map
+    var infoWindow = new google.maps.InfoWindow({ maxWidth: 350 }), marker, i;
+    
+    // Loop through our array of markers & place each one on the map  
+    for( i = 0; i < markers.length; i++ ) {
+        var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+        bounds.extend(position);
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="+markers[i][0].charAt(0).toUpperCase()+"|FE7569|" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+
+            center = position;
+            marker = new google.maps.Marker({
+                position: center,
+                map: map
+
+            });
+
+
+            circle.bindTo('center',marker,'position');
+            google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                return function() {
+                    infoWindow.setContent(infoWindowContent[i][0]);
+                    infowindow.open(map, marker);
+                };
+            })(marker, i));
+ 
+
+        // Automatically center the map fitting all markers on the screen
+        map.fitBounds(bounds);
+        
+    }
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    // var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+    //     this.setZoom(14);
+    //     google.maps.event.removeListener(boundsListener);
+    // });
+    
+
+}//initialize ends
+
+$(document).ready(function(){
+
+
+initialize();
+//setTimeout('initialize()', 2000);
+
+
+})//document ends
+
+
+</script>
+

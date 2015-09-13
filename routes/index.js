@@ -22,6 +22,8 @@ router.get('/', function(req, res, next) {
 });
 
 
+
+
 //for login
 // router.post('/login', function (req, res) {
 

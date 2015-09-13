@@ -54,18 +54,44 @@ var Users = Bookshelf.Collection.extend({
 
   // fetch all users
   router.get('/', function(req, res, next) {
-    Locations.forge()
+    Users.forge()
     .fetch()
     .then(function (collection) {
-      //res.json({error: false, data: collection.toJSON()});
-      console.log(collection.toJSON());
-      var locations;
-      res.render('user/index', { title: 'All Locations',locations: collection.toJSON() });
+     // res.json({error: false, data: collection.toJSON()});
+     console.log("==========Getting all users============");
+     res.jsonp(collection)
+      //console.log(collection.toJSON());
+
+      //var locations;
+      //res.render('user/index', { title: 'All Locations',locations: collection.toJSON() });
     })
     .catch(function (err) {
       res.status(500).json({error: true, data: {message: err.message}});
     });
   })
+
+//fetch single user
+//router.route('/users/:id')=works on show/update/delete
+//router.route('/:id')
+  // fetch user
+  router.get("/:id",function (req, res) {
+    User.forge({id: req.params.id})
+    .fetch()
+    .then(function (user) {
+      if (!user) {
+        res.status(404).json({error: true, data: {}});
+      }
+      else {
+        //res.json({error: false, data: user.toJSON()});
+        res.jsonp(user)
+        console.log(user.toJSON());
+      }
+    })
+    .catch(function (err) {
+      res.status(500).json({error: true, data: {message: err.message}});
+    });
+  })
+
 
 
 router.get('/new', function(req, res, next) {
@@ -76,6 +102,25 @@ router.get('/new', function(req, res, next) {
 
 });
 
+
+//Delete the user
+router.delete('/:id',function (req, res) {
+  console.log("===========deleting user===========");
+    User.forge({id: req.params.id})
+    .fetch({require: true})
+    .then(function (user) {
+      user.destroy()
+      .then(function () {
+        res.json({error: true, data: {message: 'User successfully deleted'}});
+      })
+      .otherwise(function (err) {
+        res.status(500).json({error: true, data: {message: err.message}});
+      });
+    })
+    .catch(function (err) {
+      res.status(500).json({error: true, data: {message: err.message}});
+    });
+  });
 
 // knex("users").insert({
 //     first_name: "John",
@@ -126,9 +171,11 @@ router.get('/add_location/:id', function(req, res, next) {
     })
     .save()
     .then(function (user) {
+      var locations=Users.forge().fetch();
       //res.json({error: false, data: {id: user.get('id')}});
         res.render('user/index', {
-           userName: req.body.comment
+           userName: req.body.comment,
+           locations: locations.toJSON()
         });
      })
     .catch(function (err) {
@@ -183,12 +230,15 @@ router.get('/get_direction/', function(req, res, next) {
     })
     .save()
     .then(function (user) {
+      console.log("==========user savedddddd==========")
       //res.json({error: false, data: {id: user.get('id')}});
 	      res.render('user/create', {
 	         userName: req.body.email
 	      });
      })
     .catch(function (err) {
+      console.log("==========user NOT savedddddd==========")
+      //res.jsonp(err)
       res.status(500).json({error: true, data: {message: err.message}});
     }); 
   });
